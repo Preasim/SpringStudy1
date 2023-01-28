@@ -46,19 +46,22 @@ public class ArticleApiController {
                 ResponseEntity.status(HttpStatus.OK).body(updated) :
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
-//
-//    //delete
-//    @DeleteMapping("/api/articles/{id}")
-//    public ResponseEntity<Article> delete(@PathVariable Long id){
-//        //대상찾기
-//        Article target = articleRepository.findById(id).orElse(null);
-//        //잘못된 요청 처리
-//        if(target == null){
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-//        }
-//        //대상삭제
-//        articleRepository.delete(target);
-//        return ResponseEntity.status(HttpStatus.OK).build();
-//    }
 
+    //delete
+    @DeleteMapping("/api/articles/{id}")
+    public ResponseEntity<Article> delete(@PathVariable Long id){
+        Article deleted = articleService.delete(id);
+        return (deleted != null) ?
+                ResponseEntity.status(HttpStatus.OK).build() :
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+
+    // 트랜잭션 -> 실패 -> 롤백
+    @PostMapping("/api/transaction-test")
+    public ResponseEntity<List<Article>> transactionTest(@RequestBody List<ArticleForm> dtos){
+        List<Article> createdList = articleService.createArticles(dtos);
+        return (createdList != null) ?
+                ResponseEntity.status(HttpStatus.OK).body(createdList) :
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
 }
